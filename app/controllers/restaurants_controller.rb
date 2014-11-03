@@ -1,7 +1,7 @@
 class RestaurantsController < ApplicationController
 
 	def index
-		@restaurants = Restaurant.all
+		@restaurants = Restaurant.all.sort
 	end
 
 	def new
@@ -9,7 +9,7 @@ class RestaurantsController < ApplicationController
 	end
 
 	def create
-		Restaurant.create(params[:restaurant].permit(:name))
+		Restaurant.create(params[:restaurant].permit(:name, :description))
 		redirect_to '/restaurants'
 	end
 
@@ -23,7 +23,7 @@ class RestaurantsController < ApplicationController
 
 	def update
 		@restaurant = Restaurant.find(params[:id])
-		@restaurant.update(params[:restaurant].permit(:name))
+		@restaurant.update(params[:restaurant].permit(:name, :description))
 		redirect_to '/restaurants'
 	end
 
