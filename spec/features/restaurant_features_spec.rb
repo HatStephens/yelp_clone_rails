@@ -79,6 +79,25 @@ describe 'deleting restaurants' do
 	end
 end
 
+describe 'creating restaurants' do
+
+	context 'an invalid restaurant' do
+		it 'does not let you submit a name that is blank' do
+			visit '/restaurants'
+      click_link 'Add a restaurant'
+      fill_in 'Name', with: ''
+      click_button 'Create Restaurant'
+      expect(page).to have_content 'error'
+    end
+
+    it "is not valid unless it has a unique name" do
+  		Restaurant.create(name: "Moe's Tavern")
+  		restaurant = Restaurant.new(name: "Moe's Tavern")
+  		expect(restaurant).to have(1).error_on(:name)
+		end
+
+  end
+end
 
 
 
