@@ -20,6 +20,19 @@ describe 'restaurants' do
 			expect(page).not_to have_content('No restaurants')
 		end
 	end
+
+	context 'vieiwing restaurants' do
+		before do 
+			@kfc = Restaurant.create(name:'KFC')
+		end
+
+		it "lets a user view restaurant" do 
+			visit '/restaurants'
+			click_link 'KFC'
+			expect(page).to have_content "KFC"
+			expect(current_path).to eq "/restaurants/#{@kfc.id}"
+		end
+	end
 end
 
 describe 'creating restaurants' do
