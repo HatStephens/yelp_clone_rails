@@ -2,6 +2,7 @@
 	<% @restaurants.each do |restaurant| %>
 	<ul>
 		<li><%= link_to "#{restaurant.name}", restaurant_path(restaurant) %></li>
+		<li><%= link_to "Edit #{restaurant.name}", edit_restaurant_path(restaurant) %></li>
 	</ul>
 		<% end %>
 	<% else %>
