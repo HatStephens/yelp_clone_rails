@@ -9,12 +9,12 @@ describe 'restaurants' do
 		end
 	end
 
-	context 'restaurants have been added' do 
-		before do 
+	context 'restaurants have been added' do
+		before do
 			Restaurant.create(name: "KFC")
 		end
 
-		it 'should display restaurants' do 
+		it 'should display restaurants' do
 			visit '/restaurants'
 			expect(page).to have_content('KFC')
 			expect(page).not_to have_content('No restaurants')
@@ -22,11 +22,11 @@ describe 'restaurants' do
 	end
 
 	context 'viewing restaurants' do
-		before do 
+		before do
 			@kfc = Restaurant.create(name:'KFC', description: "Bucket food.")
 		end
 
-		it "lets a user view restaurant" do 
+		it "lets a user view restaurant" do
 			visit '/restaurants'
 			click_link 'KFC'
 			expect(page).to have_content "KFC"
@@ -38,10 +38,15 @@ describe 'restaurants' do
 	context 'editing restaurants' do
 		before do
 			Restaurant.create(name:'KFC')
+			User.create(email:'test@test.com', password:'testtest')
 		end
 
-	it 'lets a user edit the restaurant' do
-		visit '/restaurants'
+	it 'lets a user edit the restaurant in they are signed in' do
+		visit('/')
+		click_link 'Sign in'
+		fill_in 'Email', with: 'test@test.com'
+		fill_in 'Password', with: 'testtest'
+		click_button 'Log in'
 		click_link 'Edit KFC'
 		fill_in 'Name', with: 'Kentucky Fried Chicken'
 		fill_in 'Description', with: 'Bucket food.'
@@ -49,11 +54,28 @@ describe 'restaurants' do
 		expect(page).to have_content 'Kentucky Fried Chicken'
 		expect(current_path).to eq '/restaurants'
 		end
+
+	it 'does not allow a user to edit a restaurant if they are not signed in' do
+		visit('/')
+		click_link 'Edit KFC'
+		expect(current_path).to eq '/users/sign_in'
+		expect(page).not_to have_content 'KFC'
+	end
+
 	end
 
 end
 
 describe 'creating restaurants' do
+	before do
+		User.create(email: 'test@test.com', password: 'testtest')
+		visit('/')
+		click_link 'Sign in'
+		fill_in 'Email', with: 'test@test.com'
+		fill_in 'Password', with: 'testtest'
+		click_button 'Log in'
+	end
+
 	it 'prompts user to fill out a form, then displays a new restaurant' do
 		visit '/restaurants'
 		click_link 'Add a restaurant'
@@ -66,12 +88,12 @@ describe 'creating restaurants' do
 
 describe 'deleting restaurants' do
 
-	before do 
+	before do
 		Restaurant.create(name: "KFC")
 	end
 
-		it "Remove a restaurant when a user clicks a delete link" do 
-			visit "/restaurants" 
+		it "Remove a restaurant when a user clicks a delete link" do
+			visit "/restaurants"
 			click_link 'Delete KFC'
 			expect(page).not_to have_content "KFC"
 			expect(page).to have_content "Restaurant deleted successfully"
@@ -79,7 +101,16 @@ describe 'deleting restaurants' do
 	end
 end
 
-describe 'creating restaurants' do
+describe 'creating restaurants when signed in' do
+
+	before do
+		User.create(email: 'test@test.com', password: 'testtest')
+		visit('/')
+		click_link 'Sign in'
+		fill_in 'Email', with: 'test@test.com'
+		fill_in 'Password', with: 'testtest'
+		click_button 'Log in'
+	end
 
 	context 'an invalid restaurant' do
 		it 'does not let you submit a name that is blank' do
